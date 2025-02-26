@@ -25,6 +25,7 @@ selected_group = next(group for group in resource_client.resource_groups.list() 
 
 # Define the environment variables
 env_vars = os.environ.copy()
+env_vars['AZURE_SUBSCRIPTION_ID'] = subscription_id
 env_vars['AZURE_ENV_NAME'] = selected_deployment_name
 print("Adventure Day Agent deployment: ", env_vars['AZURE_ENV_NAME'])
 env_vars['AZURE_LOCATION'] = selected_group.location
