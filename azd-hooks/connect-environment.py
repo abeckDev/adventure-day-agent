@@ -36,5 +36,4 @@ result = subprocess.run(["azd up -e "+selected_deployment_name +" --no-prompt"],
 
 #os.system(f"azd up -e {selected_group} --no-prompt")
 print(f"Connected to Azure Adventure Day Agent: {selected_deployment_name}")
-print("Local environment setup complete.")
-print("You can now proceed to deploy a phase.")
+exit(0)
