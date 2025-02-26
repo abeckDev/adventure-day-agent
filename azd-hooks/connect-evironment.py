@@ -20,11 +20,20 @@ group_list = resource_client.resource_groups.list(filter="tagName eq 'azd-env-na
 
 title = "Select the Azure Adventure Day Agent to connect to: "
 options = [group.tags.get("azd-env-name") for group in list(group_list)]
-selected_group = pick.pick(options, title)[0]
+selected_deployment_name = pick.pick(options, title)[0]
+selected_group = next(group for group in resource_client.resource_groups.list() if group.tags.get("azd-env-name") == selected_deployment_name)
 
-os.system(f"azd up -e {selected_group} --no-prompt")
-print(f"Connected to Azure Adventure Day Agent: {selected_group}")
-print("Setting up local environment...")
-os.system("source <(azd env get-values | grep AZURE_ENV_NAME)")
+# Define the environment variables
+env_vars = os.environ.copy()
+env_vars['AZURE_ENV_NAME'] = selected_deployment_name
+print("Adventure Day Agent deployment: ", env_vars['AZURE_ENV_NAME'])
+env_vars['AZURE_LOCATION'] = selected_group.location
+print("Location: ", env_vars['AZURE_LOCATION'])
+
+# Run the subprocess with the specified environment variables
+result = subprocess.run(["azd up -e "+selected_deployment_name +" --no-prompt"], env=env_vars, capture_output=False, text=True, shell=True)
+
+#os.system(f"azd up -e {selected_group} --no-prompt")
+print(f"Connected to Azure Adventure Day Agent: {selected_deployment_name}")
 print("Local environment setup complete.")
 print("You can now proceed to deploy a phase.")
